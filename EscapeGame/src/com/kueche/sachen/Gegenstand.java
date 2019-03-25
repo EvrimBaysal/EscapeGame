@@ -106,9 +106,16 @@ public class Gegenstand extends JButton implements MyInterface{
 	
 	@Override
 	public void blinken() {
-		
+		//this.setText(this.name); 
+		this.auswaehlen();
 		//TODO
-
+	}
+	
+	@Override
+	public void blinkenAus() {
+		//this.setText(this.name); 
+		this.abwaehlen();
+		//TODO
 	}
 	
 	//Get und set Methoden

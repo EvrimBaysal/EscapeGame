@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -12,16 +13,19 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import com.kueche.organisation.Inventar;
 import com.kueche.organisation.Leser;
+import com.kueche.organisation.MyInterface;
 
 
 public class GameBoard extends JPanel implements ActionListener {
@@ -32,14 +36,16 @@ public class GameBoard extends JPanel implements ActionListener {
 	private Gegenstand toaster;
 	private Gegenstand ausgewaehlteGegenstand;
 	//private Inventar[] inventar = new Inventar[7];
-	private List<Gegenstand> gegenstande;
+	private List<Gegenstand> gegenstande = new ArrayList<Gegenstand>();
 	private boolean[] istInventarFrei = new boolean[7];
+	int anzahlGegenstande;
+	JButton hilfeButton;
 
 	private BufferedImage grundBild;
 
 	//Konstruktor
 	public GameBoard() {
-		setInventar();
+		initIstInventarFrei();
 		setPreferredSize(new Dimension(GB_BREITE, GB_HOEHE));
 		try {
 			this.grundBild = ImageIO.read(new File("../EscapeGame/src/com/kueche/bilder/KucheGrundMitInventar.png"));
@@ -51,26 +57,142 @@ public class GameBoard extends JPanel implements ActionListener {
 		this.setLayout(null); // If you call setLayout(null),then it's your responsibility to set the location
 								// and
 								// dimensions of every component; this is often done using "setBounds()"
-
-		// Add Teekanne
-		teekanne = new Gegenstand(0, 0, "../EscapeGame/src/com/kueche/bilder/demlik100.png",
-				"../EscapeGame/src/com/kueche/bilder/demlik100_i.png", "Teekanne");
-		// teekanne.setPreferredSize(new Dimension(teekanne.getBreite(),
-		// teekanne.getHoehe()));
-		teekanne.setBounds(100, 100, teekanne.getBreite(), teekanne.getHoehe());
-		this.add(teekanne);
-		teekanne.addActionListener(this);
-
-		// Add Toaster
-		toaster = new Gegenstand(0, 0, "../EscapeGame/src/com/kueche/bilder/toaster.png",
-				"../EscapeGame/src/com/kueche/bilder/toaster_i.png", "Teekanne");
-		// teekanne.setPreferredSize(new Dimension(teekanne.getBreite(),
-		// teekanne.getHoehe()));
-		toaster.setBounds(100, 500, toaster.getBreite(), toaster.getHoehe());
-		this.add(toaster);
-		toaster.addActionListener(this);
+		initGegenstande();
+		
+		hilfeButton = new JButton("?");
+		hilfeButton.setFont(new Font("Arial", Font.PLAIN, 40));
+		hilfeButton.setBounds(910, 640, 100, 100);
+		hilfeButton.addActionListener(this);
+		this.add(hilfeButton);
+		
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		System.out.println(ae.getSource());
+		//**********Gegenstande auswählen oder abwählen************************
+		for(Gegenstand g : gegenstande) {
+			if (ae.getSource() == g) {
+				if (ausgewaehlteGegenstand != g) {	//Wenn Gegenstand wurde vorher nicht ausgewählt
+					ausgewaehlteGegenstand = g;		//Gegenstand auswählen
+					g.auswaehlen();
+					for(Gegenstand g2 : gegenstande) {	//und alle andere Gegenstande abwählen
+						if(g != g2) {
+							g2.abwaehlen();
+						}
+					}
+				} else {	//Wenn Gegenstand wurde vorher ausgewählt
+					ausgewaehlteGegenstand = null;
+					g.abwaehlen();	//Gegenstand abwählen
+				}
+			}
+		}
+		// **********Ende Gegenstande auswählen oder abwählen************************
+		if(ae.getSource() == hilfeButton) {
+			for(MyInterface blink : gegenstande) {
+				blink.blinken();
+			}
+		}
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		// TODO Auto-generated method stub
+		super.paintComponent(g);
+		g.drawImage(grundBild, 0, 0, this);
+		// g.drawImage(teekanne.getBild(),0,0,this);
+	}
+
+	
+
+	public class MeinMouseInputAdapter extends MouseInputAdapter {
+
+		@Override
+		public void mousePressed(MouseEvent me) {
+			super.mousePressed(me);
+			try {
+				if((ausgewaehlteGegenstand.toString() != "Kasten") && (ausgewaehlteGegenstand.isVisible() == true)) {
+					gegenstandInIventar(me);	//ausgewählte Gegenstand in Inventar verschieben
+				}
+			} catch(NullPointerException e) {
+				
+			}
+		}
+
+	}
+	
+	//*********ausgewählte Gegenstand in inventar verschieben********************************************
+	public void gegenstandInIventar(MouseEvent me) {
+		for (int i = 0; i < 7; i++) {
+			Rectangle r = Inventar.values()[i].getRechteck();
+			//Wenn ein Gegenstand ausgewält , auf ein freie Inventar gedrückt, verschiebe Gegenstand in Inventar
+			if ((me.getX() >= r.getMinX() && me.getX() <= r.getMaxX()) // check if X is within range
+					&& (me.getY() >= r.getMinY() && me.getY() <= r.getMaxY())
+					&& (ausgewaehlteGegenstand != null)
+					&& (istInventarFrei[i] == true)) {
+				//Verschibe das ausgewaehlte Gegenstand in inventar
+				ausgewaehlteGegenstand.setBounds(r.x, r.y, r.width, r.height);
+				istInventarFrei[i] = false;	//Inventar ist nicht mehr frei
+				if(ausgewaehlteGegenstand.getInventarNr() != 0) {	//Wenn Gegenstandt war schon in einem Inventar, set es frei
+					istInventarFrei[ausgewaehlteGegenstand.getInventarNr() - 1] = true;
+				}
+				ausgewaehlteGegenstand.setInventarNr(i+1);	//Gegenstandt inventarnr
+			}
+		}
+	}
+	
+	public void initGegenstande() {
+		
+		Gegenstand newGegenstand;
+		String name;
+		String bild;
+		String bild_i;
+		int posX;
+		int posY;
+		int sichtbar;
+		
+		Leser gameKonfig = new Leser("../EscapeGame/src/GameKonfig.txt");
+		anzahlGegenstande = gameKonfig.werteLesenInt("AnzahlGegenstande");
+		for(int i = 0; i < anzahlGegenstande ; i++ ) {
+			posX = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_PosX");
+			posY = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_PosY");
+			bild = ".." + gameKonfig.werteLesenString("Gegenstand" + (i+1) + "_Bild");
+			bild_i = ".." + gameKonfig.werteLesenString("Gegenstand" + (i+1) + "_Bild_i");
+			name = gameKonfig.werteLesenString("Gegenstand" + (i+1) + "_name");
+			sichtbar = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_Sichtbar");
+			newGegenstand = new Gegenstand(posX, posY, bild, bild_i, name);
+			newGegenstand.setBounds(posX, posY, newGegenstand.getBreite(), newGegenstand.getHoehe());
+			if(sichtbar == 0) {
+				newGegenstand.setVisible(false);
+			} 
+			this.add(newGegenstand);
+			newGegenstand.addActionListener(this);
+			gegenstande.add(newGegenstand);
+		}
+		
+		Kasten schrank = new Kasten(50,400,
+				"../EscapeGame/src/com/kueche/bilder/schrank.png",
+				"../EscapeGame/src/com/kueche/bilder/schrankOffen.png",
+				"Schrank");
+		schrank.setBounds(50, 40, schrank.getBreite(), schrank.getHoehe());
+		this.add(schrank);
+		schrank.addActionListener(this);
+		schrank.setGegenstandInKasten(gegenstande.get(1));
+		gegenstande.get(1).setVisible(false); 
+		gegenstande.add(schrank);
+	}
+	
+	//alle istInventarFrei variable auf true setzen
+	public void initIstInventarFrei() {
+		for(int i = 0; i < 7; i++) {
+			istInventarFrei[i] = true;
+		}
+	}
+
+}
+
+// Alte Codes 
+/*
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		// TODO Auto-generated method stub
@@ -100,50 +222,7 @@ public class GameBoard extends JPanel implements ActionListener {
 		// if(ae.)
 
 	}
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		// TODO Auto-generated method stub
-		super.paintComponent(g);
-		g.drawImage(grundBild, 0, 0, this);
-		// g.drawImage(teekanne.getBild(),0,0,this);
-	}
-
-	
-
-	public class MeinMouseInputAdapter extends MouseInputAdapter {
-
-		@Override
-		public void mousePressed(MouseEvent me) {
-			super.mousePressed(me);
-
-			for (int i = 0; i < 7; i++) {
-				Rectangle r = Inventar.values()[i].getRechteck();
-				//Wenn ein Gegenstand ausgewält , auf ein freie Inventar gedrückt, verschiebe Gegenstand in Inventar
-				if ((me.getX() >= r.getMinX() && me.getX() <= r.getMaxX()) // check if X is within range
-						&& (me.getY() >= r.getMinY() && me.getY() <= r.getMaxY())
-						&& (ausgewaehlteGegenstand != null)
-						&& (istInventarFrei[i] == true)) {
-					//Verschibe das ausgewaehlte Gegenstand in inventar
-					ausgewaehlteGegenstand.setBounds(r.x, r.y, r.width, r.height);
-					istInventarFrei[i] = false;	//Inventar ist nicht mehr frei
-					if(ausgewaehlteGegenstand.getInventarNr() != 0) {	//Wenn Gegenstandt war schon in einem Inventar, set es frei
-						istInventarFrei[ausgewaehlteGegenstand.getInventarNr() - 1] = true;
-					}
-					ausgewaehlteGegenstand.setInventarNr(i+1);	//Gegenstandt inventarnr
-				}
-			}
-		}
-
-	}
-	
-	public void setInventar() {
-		for(int i = 0; i < 7; i++) {
-			istInventarFrei[i] = true;
-		}
-	}
-
-}
+ */
 
 /*
 public void setInventar() {

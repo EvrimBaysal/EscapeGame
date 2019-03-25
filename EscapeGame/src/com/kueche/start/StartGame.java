@@ -1,5 +1,7 @@
 package com.kueche.start;
-
+/**
+ * Bild Quellen http://clipart-library.com
+ */
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
