@@ -23,6 +23,7 @@ import javax.swing.event.MouseInputAdapter;
 import com.kueche.organisation.Inventar;
 import com.kueche.organisation.Leser;
 
+
 public class GameBoard extends JPanel implements ActionListener {
 
 	private final int GB_BREITE = 1024;
@@ -30,12 +31,13 @@ public class GameBoard extends JPanel implements ActionListener {
 	private Gegenstand teekanne;
 	private Gegenstand toaster;
 	private Gegenstand ausgewaehlteGegenstand;
-	// private Container[] inventar = new Container[7];
-	private Inventar[] inventar = new Inventar[7];
+	//private Inventar[] inventar = new Inventar[7];
 	private List<Gegenstand> gegenstande;
+	private boolean[] istInventarFrei = new boolean[7];
 
 	private BufferedImage grundBild;
 
+	//Konstruktor
 	public GameBoard() {
 		setInventar();
 		setPreferredSize(new Dimension(GB_BREITE, GB_HOEHE));
@@ -107,36 +109,7 @@ public class GameBoard extends JPanel implements ActionListener {
 		// g.drawImage(teekanne.getBild(),0,0,this);
 	}
 
-	public void setInventar() {
-		int breite = 0;
-		int hoehe = 0;
-		Leser leser = new Leser("../EscapeGame/src/GameKonfig.txt");
-		try {
-			// System.out.println(leser.werteLesenInt("Inventar3_PosY"));
-			breite = leser.werteLesenInt("Inventar_Breite");
-			hoehe = leser.werteLesenInt("Inventar_Hoehe");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		inventar[0] = new Inventar(22, 640, 111, 109);
-		for (int i = 1; i <= inventar.length; i++) {
-			int posX;
-			int posY;
-			String sucheX = "Inventar" + (i) + "_PosX";
-			String sucheY = "Inventar" + (i) + "_PosY";
-			try {
-				posX = leser.werteLesenInt(sucheX);
-				posY = leser.werteLesenInt(sucheY);
-				inventar[i - 1] = new Inventar(posX, posY, breite, hoehe);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-		// inventar[0].setBounds(new Rectangle(22,640,111,109));
-	}
+	
 
 	public class MeinMouseInputAdapter extends MouseInputAdapter {
 
@@ -144,23 +117,63 @@ public class GameBoard extends JPanel implements ActionListener {
 		public void mousePressed(MouseEvent me) {
 			super.mousePressed(me);
 
-			for (int i = 0; i < inventar.length; i++) {
-				Rectangle r = inventar[i].getRechteck();
-
-				//System.out.println(inventar.length);
-				// if(me.getX() == inventar[0].getPosX() && me.getY() == inventar[0].getPosY())
-				// {
+			for (int i = 0; i < 7; i++) {
+				Rectangle r = Inventar.values()[i].getRechteck();
+				//Wenn ein Gegenstand ausgewält , auf ein freie Inventar gedrückt, verschiebe Gegenstand in Inventar
 				if ((me.getX() >= r.getMinX() && me.getX() <= r.getMaxX()) // check if X is within range
-						&& (me.getY() >= r.getMinY() && me.getY() <= r.getMaxY())) {
-					System.out.println("mousePressed");
-					// ausgewaehlteGegenstand.setBounds(inventar[0].getPosX(),
-					// inventar[0].getPosY(), ausgewaehlteGegenstand.getBreite(),
-					// ausgewaehlteGegenstand.getHoehe());
+						&& (me.getY() >= r.getMinY() && me.getY() <= r.getMaxY())
+						&& (ausgewaehlteGegenstand != null)
+						&& (istInventarFrei[i] == true)) {
+					//Verschibe das ausgewaehlte Gegenstand in inventar
 					ausgewaehlteGegenstand.setBounds(r.x, r.y, r.width, r.height);
+					istInventarFrei[i] = false;	//Inventar ist nicht mehr frei
+					if(ausgewaehlteGegenstand.getInventarNr() != 0) {	//Wenn Gegenstandt war schon in einem Inventar, set es frei
+						istInventarFrei[ausgewaehlteGegenstand.getInventarNr() - 1] = true;
+					}
+					ausgewaehlteGegenstand.setInventarNr(i+1);	//Gegenstandt inventarnr
 				}
 			}
 		}
 
 	}
+	
+	public void setInventar() {
+		for(int i = 0; i < 7; i++) {
+			istInventarFrei[i] = true;
+		}
+	}
 
 }
+
+/*
+public void setInventar() {
+	int breite = 0;
+	int hoehe = 0;
+	Leser leser = new Leser("../EscapeGame/src/GameKonfig.txt");
+	try {
+		// System.out.println(leser.werteLesenInt("Inventar3_PosY"));
+		breite = leser.werteLesenInt("Inventar_Breite");
+		hoehe = leser.werteLesenInt("Inventar_Hoehe");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	inventar[0] = new Inventar(22, 640, 111, 109);
+	for (int i = 1; i <= inventar.length; i++) {
+		int posX;
+		int posY;
+		String sucheX = "Inventar" + (i) + "_PosX";
+		String sucheY = "Inventar" + (i) + "_PosY";
+		try {
+			posX = leser.werteLesenInt(sucheX);
+			posY = leser.werteLesenInt(sucheY);
+			inventar[i - 1] = new Inventar(posX, posY, breite, hoehe);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	// inventar[0].setBounds(new Rectangle(22,640,111,109));
+}
+*/

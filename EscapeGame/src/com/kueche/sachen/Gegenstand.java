@@ -34,6 +34,7 @@ public class Gegenstand extends JButton implements MyInterface{
 	protected BufferedImage ausgewaehlteBild;	//Bild von Gegenstand wenn ausgewählt
 	protected BufferedImage abgewaehlteBild;	//Bild von Gegenstand wenn ausgewählt
 	protected String name;
+	protected int inventarNr = 0;
 	//private Timer timer;
 	
 	//private final int DELAY = 25;
@@ -70,6 +71,14 @@ public class Gegenstand extends JButton implements MyInterface{
 		
 	}
 	
+	public int getInventarNr() {
+		return inventarNr;
+	}
+
+	public void setInventarNr(int inventarNr) {
+		this.inventarNr = inventarNr;
+	}
+
 	//Wenn ein Gegenstand gewählt bild ändern
 	public void auswaehlen() {
 		bild = ausgewaehlteBild;
