@@ -1,4 +1,4 @@
-package com.kueche.organisation;
+package com.kueche.persistenz;
 
 public interface MyInterface {
 	void blinken();

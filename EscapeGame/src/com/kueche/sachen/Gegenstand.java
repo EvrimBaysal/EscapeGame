@@ -14,7 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.Timer;
 
-import com.kueche.organisation.MyInterface;
+import com.kueche.persistenz.MyInterface;
 
 /**
  * 
@@ -70,14 +70,6 @@ public class Gegenstand extends JButton implements MyInterface{
 		this.setBorderPainted(false);
 		
 	}
-	
-	public int getInventarNr() {
-		return inventarNr;
-	}
-
-	public void setInventarNr(int inventarNr) {
-		this.inventarNr = inventarNr;
-	}
 
 	//Wenn ein Gegenstand gewählt bild ändern
 	public void auswaehlen() {
@@ -94,7 +86,7 @@ public class Gegenstand extends JButton implements MyInterface{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(bild, 0, 0, this); // see javadoc for more info on the parameters            
+        g.drawImage(bild, 0, 0, this);           
     }
 	
 	//A Rectangle specifies an area in a coordinate space that is enclosed by the Rectangle object's upper-left point (x,y)
@@ -119,6 +111,9 @@ public class Gegenstand extends JButton implements MyInterface{
 	}
 	
 	//Get und set Methoden
+	public int getInventarNr() {return inventarNr;}
+	public void setInventarNr(int inventarNr) {this.inventarNr = inventarNr;}
+	
 	public int getPosX() {return posX;}
 	public void setPosX(int posX) {this.posX = posX;}
 

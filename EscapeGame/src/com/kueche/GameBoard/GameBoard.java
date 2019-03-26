@@ -1,4 +1,4 @@
-package com.kueche.sachen;
+package com.kueche.GameBoard;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -23,9 +23,12 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputAdapter;
 
-import com.kueche.organisation.Inventar;
-import com.kueche.organisation.Leser;
-import com.kueche.organisation.MyInterface;
+import com.kueche.persistenz.Leser;
+import com.kueche.persistenz.MyInterface;
+import com.kueche.sachen.Gegenstand;
+import com.kueche.sachen.Inventar;
+import com.kueche.sachen.Kasten;
+import com.kueche.sachen.Tuer;
 
 
 public class GameBoard extends JPanel implements ActionListener {
@@ -38,8 +41,9 @@ public class GameBoard extends JPanel implements ActionListener {
 	//private Inventar[] inventar = new Inventar[7];
 	private List<Gegenstand> gegenstande = new ArrayList<Gegenstand>();
 	private boolean[] istInventarFrei = new boolean[7];
-	int anzahlGegenstande;
-	JButton hilfeButton;
+	private int anzahlGegenstande;
+	private JButton hilfeButton;
+	private Tuer tuer;
 
 	private BufferedImage grundBild;
 
@@ -48,7 +52,7 @@ public class GameBoard extends JPanel implements ActionListener {
 		initIstInventarFrei();
 		setPreferredSize(new Dimension(GB_BREITE, GB_HOEHE));
 		try {
-			this.grundBild = ImageIO.read(new File("../EscapeGame/src/com/kueche/bilder/KucheGrundMitInventar.png"));
+			this.grundBild = ImageIO.read(new File("../EscapeGame/src/com/kueche/bilder/KucheGrundMitInventarV1.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,8 +73,40 @@ public class GameBoard extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		System.out.println(ae.getSource());
-		//**********Gegenstande auswählen oder abwählen************************
+
+		gegenstandeAusAbWaehlen(ae); //Gegenstande auswählen oder abwählen. ausgewaehlteGegenstand bestimmen
+		
+		//***********HilfeButton*****************************************************
+		if(ae.getSource() == hilfeButton) {
+			for(MyInterface blink : gegenstande) {
+				blink.blinken();
+			}
+		}
+		//***********Ende HilfeButton*****************************************************
+		
+		if (ae.getSource() == tuer) {
+			try {
+			if(ausgewaehlteGegenstand.getName().indexOf("Key") > -1) {
+				boolean weiter = tuer.schlossOffnen();
+				System.out.println("InventarNr :" + ausgewaehlteGegenstand.getInventarNr()); 
+				if(ausgewaehlteGegenstand.getInventarNr() != 0) {
+					istInventarFrei[ausgewaehlteGegenstand.getInventarNr()-1] = true;
+				}
+				gegenstande.remove(ausgewaehlteGegenstand);
+				this.remove(ausgewaehlteGegenstand);
+				ausgewaehlteGegenstand = null;
+				repaint();
+			}
+			}
+			catch(NullPointerException e) {
+				
+			}
+		}
+		
+	}
+	
+	/**Gegenstande auswählen oder abwählen. ausgewaehlteGegenstand bestimmen*/
+	public void gegenstandeAusAbWaehlen(ActionEvent ae) {
 		for(Gegenstand g : gegenstande) {
 			if (ae.getSource() == g) {
 				if (ausgewaehlteGegenstand != g) {	//Wenn Gegenstand wurde vorher nicht ausgewählt
@@ -85,12 +121,6 @@ public class GameBoard extends JPanel implements ActionListener {
 					ausgewaehlteGegenstand = null;
 					g.abwaehlen();	//Gegenstand abwählen
 				}
-			}
-		}
-		// **********Ende Gegenstande auswählen oder abwählen************************
-		if(ae.getSource() == hilfeButton) {
-			for(MyInterface blink : gegenstande) {
-				blink.blinken();
 			}
 		}
 	}
@@ -170,16 +200,103 @@ public class GameBoard extends JPanel implements ActionListener {
 			gegenstande.add(newGegenstand);
 		}
 		
-		Kasten schrank = new Kasten(50,400,
+		Kasten schrank1 = new Kasten(0,0,
 				"../EscapeGame/src/com/kueche/bilder/schrank.png",
 				"../EscapeGame/src/com/kueche/bilder/schrankOffen.png",
-				"Schrank");
-		schrank.setBounds(50, 40, schrank.getBreite(), schrank.getHoehe());
-		this.add(schrank);
-		schrank.addActionListener(this);
-		schrank.setGegenstandInKasten(gegenstande.get(1));
+				"Schrank1");
+		schrank1.setBounds(556, 426, schrank1.getBreite(), schrank1.getHoehe());
+		this.add(schrank1);
+		schrank1.addActionListener(this);
+		schrank1.setGegenstandInKasten(gegenstande.get(0));
+		gegenstande.get(0).setVisible(false); 
+		gegenstande.add(schrank1);
+		
+		//2. Scrank 837,426
+		Kasten schrank2 = new Kasten(0,0,
+				"../EscapeGame/src/com/kueche/bilder/schrank.png",
+				"../EscapeGame/src/com/kueche/bilder/schrankOffen.png",
+				"Schrank2");
+		schrank2.setBounds(837, 426, schrank2.getBreite(), schrank2.getHoehe());
+		this.add(schrank2);
+		schrank2.addActionListener(this);
+		schrank2.setGegenstandInKasten(gegenstande.get(1));
 		gegenstande.get(1).setVisible(false); 
-		gegenstande.add(schrank);
+		gegenstande.add(schrank2);
+		
+		//3. Schrank Mikrowelle 553,341
+		Kasten schrank3 = new Kasten(0,0,
+				"../EscapeGame/src/com/kueche/bilder/mikroWelle.png",
+				"../EscapeGame/src/com/kueche/bilder/mikroWelle_i.png",
+				"Schrank3");
+		schrank3.setBounds(553, 341, schrank3.getBreite(), schrank3.getHoehe());
+		this.add(schrank3);
+		schrank3.addActionListener(this);
+		schrank3.setGegenstandInKasten(gegenstande.get(2));
+		gegenstande.get(2).setVisible(false); 
+		gegenstande.add(schrank3);
+		
+		//4. Schrank Teekanne 903,345
+		Kasten schrank4 = new Kasten(0,0,
+				"../EscapeGame/src/com/kueche/bilder/teekanne.png",
+				"../EscapeGame/src/com/kueche/bilder/teekanne_i.png",
+				"Schrank3");
+		schrank4.setBounds(903, 345, schrank4.getBreite(), schrank4.getHoehe());
+		this.add(schrank4);
+		schrank4.addActionListener(this);
+		schrank4.setGegenstandInKasten(gegenstande.get(3));
+		gegenstande.get(3).setVisible(false); 
+		gegenstande.add(schrank4);
+		
+		//5. Schrank Schrank-Oben 556,186
+		Kasten schrank5 = new Kasten(0,0,
+				"../EscapeGame/src/com/kueche/bilder/schrankOben.png",
+				"../EscapeGame/src/com/kueche/bilder/schrankOben_i.png",
+				"Schrank3");
+		schrank5.setBounds(556, 186, schrank5.getBreite(), schrank5.getHoehe());
+		this.add(schrank5);
+		schrank5.addActionListener(this);
+		schrank5.setGegenstandInKasten(gegenstande.get(4));
+		gegenstande.get(4).setVisible(false); 
+		gegenstande.add(schrank5);
+		
+		//6. Schrank Schrank-Oben 836,186
+		Kasten schrank6 = new Kasten(0,0,
+				"../EscapeGame/src/com/kueche/bilder/schrankOben.png",
+				"../EscapeGame/src/com/kueche/bilder/schrankOben_i.png",
+				"Schrank3");
+		schrank6.setBounds(836, 186, schrank6.getBreite(), schrank6.getHoehe());
+		this.add(schrank6);
+		schrank6.addActionListener(this);
+		schrank6.setGegenstandInKasten(gegenstande.get(5));
+		gegenstande.get(5).setVisible(false); 
+		gegenstande.add(schrank6);
+		
+		//7. Schrank Kühlschrank 730,297
+		Kasten schrank7 = new Kasten(0,0,
+				"../EscapeGame/src/com/kueche/bilder/Kuehlschrank.png",
+				"../EscapeGame/src/com/kueche/bilder/Kuehlschrank_i.png",
+				"Schrank3");
+		schrank7.setBounds(730, 297, schrank7.getBreite(), schrank7.getHoehe());
+		this.add(schrank7);
+		schrank7.addActionListener(this);
+		schrank7.setGegenstandInKasten(gegenstande.get(6));
+		gegenstande.get(6).setVisible(false); 
+		gegenstande.add(schrank7);
+		
+		// Tür mit 7 Schloss. pos = 15, 260
+		tuer = new Tuer(new String[] {"../EscapeGame/src/com/kueche/bilder/tuer7.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_1G.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_2G.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_3G.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_4G.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_5G.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_6G.png",
+										"../EscapeGame/src/com/kueche/bilder/tuer7_7G.png",
+		});
+		tuer.setBounds(15, 260, tuer.getBreite(), tuer.getHoehe());
+		this.add(tuer);
+		tuer.addActionListener(this);
+
 	}
 	
 	//alle istInventarFrei variable auf true setzen

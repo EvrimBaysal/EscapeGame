@@ -1,4 +1,4 @@
-package com.kueche.organisation;
+package com.kueche.sachen;
 
 import java.awt.Component;
 import java.awt.Rectangle;

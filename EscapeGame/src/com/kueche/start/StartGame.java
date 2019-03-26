@@ -7,7 +7,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
-import com.kueche.sachen.GameBoard;
+import com.kueche.GameBoard.GameBoard;
 
 public class StartGame extends JFrame{
 

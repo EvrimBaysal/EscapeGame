@@ -1,4 +1,4 @@
-package com.kueche.organisation;
+package com.kueche.persistenz;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
