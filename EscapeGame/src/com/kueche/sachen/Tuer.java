@@ -65,7 +65,8 @@ public class Tuer extends JButton implements MyInterface {
 
 	@Override
 	public void blinken() {
-		// TODO Auto-generated method stub
+		bild = bilder.get(anzahlSchloss-1);
+		this.repaint();
 
 	}
 

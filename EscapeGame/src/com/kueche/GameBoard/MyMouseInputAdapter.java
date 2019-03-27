@@ -1,4 +1,4 @@
-package com.kueche.persistenz;
+package com.kueche.GameBoard;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;

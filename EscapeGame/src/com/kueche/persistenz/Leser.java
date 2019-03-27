@@ -28,7 +28,7 @@ public class Leser {
 		}
 		try {
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
+				//System.out.println(line);
 				if (line.contains(suche)) {
 					gefunden = line.indexOf('=');
 					werte = Integer.parseInt(line.substring(gefunden + 1));
@@ -60,7 +60,7 @@ public class Leser {
 	    
 		try {
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
+				//System.out.println(line);
 				if(line.contains(suche)) {
 					gefunden = line.indexOf('=');
 					werte = line.substring(gefunden+1);

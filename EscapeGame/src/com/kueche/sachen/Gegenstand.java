@@ -110,6 +110,13 @@ public class Gegenstand extends JButton implements MyInterface{
 		//TODO
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return name;
+	}
+	
+	
 	//Get und set Methoden
 	public int getInventarNr() {return inventarNr;}
 	public void setInventarNr(int inventarNr) {this.inventarNr = inventarNr;}

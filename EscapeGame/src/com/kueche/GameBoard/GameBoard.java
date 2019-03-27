@@ -25,6 +25,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import com.kueche.persistenz.Leser;
 import com.kueche.persistenz.MyInterface;
+import com.kueche.persistenz.SacheNichtInBoardException;
 import com.kueche.sachen.Gegenstand;
 import com.kueche.sachen.Inventar;
 import com.kueche.sachen.Kasten;
@@ -81,6 +82,9 @@ public class GameBoard extends JPanel implements ActionListener {
 			for(MyInterface blink : gegenstande) {
 				blink.blinken();
 			}
+			
+			MyInterface blink = tuer;
+			blink.blinken();
 		}
 		//***********Ende HilfeButton*****************************************************
 		
@@ -184,8 +188,18 @@ public class GameBoard extends JPanel implements ActionListener {
 		Leser gameKonfig = new Leser("../EscapeGame/src/GameKonfig.txt");
 		anzahlGegenstande = gameKonfig.werteLesenInt("AnzahlGegenstande");
 		for(int i = 0; i < anzahlGegenstande ; i++ ) {
-			posX = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_PosX");
-			posY = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_PosY");
+			try {
+				posX = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_PosX");
+				posY = gameKonfig.werteLesenInt("Gegenstand" + (i+1) + "_PosY");
+				if((posX < 0) || (posX > GB_BREITE) || (posY < 0) || (posY > GB_HOEHE) ) {
+					throw new SacheNichtInBoardException();
+				}
+			} catch(SacheNichtInBoardException e) {
+				posX = 0;
+				posY = 0;
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 			bild = ".." + gameKonfig.werteLesenString("Gegenstand" + (i+1) + "_Bild");
 			bild_i = ".." + gameKonfig.werteLesenString("Gegenstand" + (i+1) + "_Bild_i");
 			name = gameKonfig.werteLesenString("Gegenstand" + (i+1) + "_name");

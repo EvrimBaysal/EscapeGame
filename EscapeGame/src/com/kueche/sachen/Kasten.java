@@ -2,7 +2,7 @@ package com.kueche.sachen;
 
 public class Kasten extends Gegenstand {
 	
-	Gegenstand gegenstandInKasten = null;
+	private Gegenstand gegenstandInKasten = null;
 	
 	public Kasten(int x, int y, String bildPfad, String bildPfadAusgewaehlt, String name) {
 		super(x, y, bildPfad, bildPfadAusgewaehlt, name);
