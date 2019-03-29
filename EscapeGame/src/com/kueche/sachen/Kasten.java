@@ -1,5 +1,11 @@
 package com.kueche.sachen;
 
+/**
+ * @author Evrim Baysal
+ * <pre>
+ * Kasten ist ein Gegenstand, kann ein anderes Gegenstand behalten und kann nicht verschieben werden
+ *</pre>
+ */
 public class Kasten extends Gegenstand {
 	
 	private Gegenstand gegenstandInKasten = null;

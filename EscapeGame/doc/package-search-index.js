@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"com.kueche.GameBoard"},{"l":"com.kueche.persistenz"},{"l":"com.kueche.sachen"},{"l":"com.kueche.start"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.kueche.GameBoard"},{"l":"com.kueche.persistenz"},{"l":"com.kueche.sachen"},{"l":"com.kueche.start"}]

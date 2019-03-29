@@ -7,7 +7,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+/**
+ * @author Evrim Baysal
+ * <pre>
+ * Leser liest GameKonfig und gibt zurück die gesuchte Werte
+ *</pre>
+ */
 public class Leser {
+	/** Pfad zu Datei zu lesen */
 	private String filePfad;
 	BufferedReader reader = null;
 
@@ -15,6 +22,11 @@ public class Leser {
 		filePfad = pfad;
 	}
 
+	/** Findet gesuchte String in Datei und gibt seine Werte zurück.
+	 *  Werte soll eine Integer sein.
+	 *  @param String suche : Gesuchte Text in Konfig. Z.B.: "Gegenstand1_PosX"
+	 *  @return int werte. z.B.: Gegenstand1_PosX=250. werte = 250
+	 */
 	public int werteLesenInt(String suche) {
 		int werte;
 		int gefunden;
@@ -45,6 +57,11 @@ public class Leser {
 		return 0;
 	}
 
+	/** Findet gesuchte String in Datei und gibt seine Werte zurück.
+	 *  Werte ist ein String
+	 *  @param String suche : Gesuchte Text in Konfig. Z.B.: "Gegenstand1_name"
+	 *  @return int werte. z.B.: Gegenstand1_name=Key1. werte = Key1
+	 */
 	public String werteLesenString(String suche) {
 		String werte;
 		int gefunden;

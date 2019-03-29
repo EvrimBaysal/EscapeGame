@@ -19,7 +19,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputAdapter;
 
@@ -31,20 +34,29 @@ import com.kueche.sachen.Inventar;
 import com.kueche.sachen.Kasten;
 import com.kueche.sachen.Tuer;
 
-
+/**
+ * @author Evrim Baysal
+ * <pre> 
+ * class GameBoard ist die Haupt Fenster für das Spiel
+ *</pre>
+ */
 public class GameBoard extends JPanel implements ActionListener {
-
+	/** Game Board Breite  */
 	private final int GB_BREITE = 1024;
+	/** Game Board Höhe  */
 	private final int GB_HOEHE = 768;
-	private Gegenstand teekanne;
-	private Gegenstand toaster;
+	/** Ausgewählte Gegenstand für die Interaktionen zwischen Sachen */
 	private Gegenstand ausgewaehlteGegenstand;
 	//private Inventar[] inventar = new Inventar[7];
+	/**Dynamische Array Speicher alle Gegenstande */
 	private List<Gegenstand> gegenstande = new ArrayList<Gegenstand>();
+	/** Array für die Kontrolle jede Inventar kann nur eine Sache halten */
 	private boolean[] istInventarFrei = new boolean[7];
+	/** Anzahl Gegenstande wird gelesen von GameKonfig*/
 	private int anzahlGegenstande;
 	private JButton hilfeButton;
 	private Tuer tuer;
+	private JLabel gameText;
 
 	private BufferedImage grundBild;
 
@@ -62,6 +74,12 @@ public class GameBoard extends JPanel implements ActionListener {
 		this.setLayout(null); // If you call setLayout(null),then it's your responsibility to set the location
 								// and
 								// dimensions of every component; this is often done using "setBounds()"
+		gameText = new JLabel("Finde 7 Schlüssel und öffne die Tür", SwingConstants.CENTER); 
+		gameText.setBounds(10, 10, 1024, 50);
+		gameText.setFont(new Font("Serif", Font.BOLD, 30));
+		gameText.setForeground(Color.BLUE);
+		this.add(gameText);
+		
 		initGegenstande();
 		
 		hilfeButton = new JButton("?");
@@ -92,7 +110,7 @@ public class GameBoard extends JPanel implements ActionListener {
 			try {
 			if(ausgewaehlteGegenstand.getName().indexOf("Key") > -1) {
 				boolean weiter = tuer.schlossOffnen();
-				System.out.println("InventarNr :" + ausgewaehlteGegenstand.getInventarNr()); 
+				//System.out.println("InventarNr :" + ausgewaehlteGegenstand.getInventarNr()); 
 				if(ausgewaehlteGegenstand.getInventarNr() != 0) {
 					istInventarFrei[ausgewaehlteGegenstand.getInventarNr()-1] = true;
 				}
@@ -100,6 +118,13 @@ public class GameBoard extends JPanel implements ActionListener {
 				this.remove(ausgewaehlteGegenstand);
 				ausgewaehlteGegenstand = null;
 				repaint();
+				if(weiter == false) {
+					gameText.setText("Gewonnen!");
+					System.out.println("Gewonnen!");
+					this.repaint();
+				}
+				//else
+					//System.out.println("Weiter");
 			}
 			}
 			catch(NullPointerException e) {
@@ -109,7 +134,9 @@ public class GameBoard extends JPanel implements ActionListener {
 		
 	}
 	
-	/**Gegenstande auswählen oder abwählen. ausgewaehlteGegenstand bestimmen*/
+	/**Gegenstande auswählen oder abwählen. ausgewaehlteGegenstand bestimmen
+	 * @param ae ist actionPerformed(ActionEvent ae)
+	 * */
 	public void gegenstandeAusAbWaehlen(ActionEvent ae) {
 		for(Gegenstand g : gegenstande) {
 			if (ae.getSource() == g) {
@@ -156,6 +183,7 @@ public class GameBoard extends JPanel implements ActionListener {
 	}
 	
 	//*********ausgewählte Gegenstand in inventar verschieben********************************************
+	/** ausgewählte Gegenstand in einem leeren Inventar verschieben */
 	public void gegenstandInIventar(MouseEvent me) {
 		for (int i = 0; i < 7; i++) {
 			Rectangle r = Inventar.values()[i].getRechteck();
@@ -175,6 +203,7 @@ public class GameBoard extends JPanel implements ActionListener {
 		}
 	}
 	
+	/** Initialisiert Gegenstande in Gameboard */
 	public void initGegenstande() {
 		
 		Gegenstand newGegenstand;
@@ -313,7 +342,7 @@ public class GameBoard extends JPanel implements ActionListener {
 
 	}
 	
-	//alle istInventarFrei variable auf true setzen
+	/** alle istInventarFrei variable auf true setzen */
 	public void initIstInventarFrei() {
 		for(int i = 0; i < 7; i++) {
 			istInventarFrei[i] = true;
@@ -321,69 +350,3 @@ public class GameBoard extends JPanel implements ActionListener {
 	}
 
 }
-
-// Alte Codes 
-/*
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// TODO Auto-generated method stub
-		System.out.println(ae.getSource());
-		if (ae.getSource() == teekanne) {
-			// System.out.println("Button geklickt!");
-			if (ausgewaehlteGegenstand != teekanne) {
-				ausgewaehlteGegenstand = teekanne;
-				teekanne.blinken();
-				teekanne.auswaehlen();
-
-				toaster.abwaehlen();
-			} else {
-				ausgewaehlteGegenstand = null;
-				teekanne.abwaehlen();
-			}
-		}
-
-		if (ae.getSource() == toaster) {
-			// System.out.println("Button geklickt!");
-			ausgewaehlteGegenstand = toaster;
-			toaster.auswaehlen();
-			teekanne.abwaehlen();
-			// teekanne.setBorder(new LineBorder(Color.WHITE, 12));
-		}
-
-		// if(ae.)
-
-	}
- */
-
-/*
-public void setInventar() {
-	int breite = 0;
-	int hoehe = 0;
-	Leser leser = new Leser("../EscapeGame/src/GameKonfig.txt");
-	try {
-		// System.out.println(leser.werteLesenInt("Inventar3_PosY"));
-		breite = leser.werteLesenInt("Inventar_Breite");
-		hoehe = leser.werteLesenInt("Inventar_Hoehe");
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	inventar[0] = new Inventar(22, 640, 111, 109);
-	for (int i = 1; i <= inventar.length; i++) {
-		int posX;
-		int posY;
-		String sucheX = "Inventar" + (i) + "_PosX";
-		String sucheY = "Inventar" + (i) + "_PosY";
-		try {
-			posX = leser.werteLesenInt(sucheX);
-			posY = leser.werteLesenInt(sucheY);
-			inventar[i - 1] = new Inventar(posX, posY, breite, hoehe);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-	// inventar[0].setBounds(new Rectangle(22,640,111,109));
-}
-*/

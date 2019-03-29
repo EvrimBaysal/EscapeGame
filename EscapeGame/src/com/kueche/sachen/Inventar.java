@@ -3,6 +3,12 @@ package com.kueche.sachen;
 import java.awt.Component;
 import java.awt.Rectangle;
 
+/**
+ * @author Evrimpc
+ * <pre>
+ * Enum Inventar ein Rechteck behaltet Gegenstande
+ *</pre>
+ */
 public enum Inventar  {
 	INVENTAR1(25, 640), INVENTAR2(150, 640), INVENTAR3(280, 640), INVENTAR4(405, 640),
 	INVENTAR5(530, 640), INVENTAR6(660, 640), INVENTAR7(785, 640);

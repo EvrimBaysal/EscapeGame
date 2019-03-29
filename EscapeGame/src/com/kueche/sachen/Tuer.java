@@ -12,15 +12,26 @@ import javax.swing.JButton;
 
 import com.kueche.persistenz.MyInterface;
 
+/**
+ * @author Evrim Baysal
+ * <pre>
+ * Tür mit mehrere Schlösser. Spiel zu Beenden sollen alle Schlösser geöffnet werden. 
+ *</pre>
+ */
 public class Tuer extends JButton implements MyInterface {
 
 	private int anzahlSchloss;
 	private int offeneSchloss;
 	private BufferedImage bild;
+	/** Bilder darstellt geöffnete Schlösser */
 	private List<BufferedImage> bilder = new ArrayList<BufferedImage>();
 	protected int hoehe; // Höhe von Gegenstand
 	protected int breite; // Breite von Gegenstand
 
+	/** 
+	 * 
+	 * @param pfads : Pfads für Bilder darstellt geöffnete Schlösser
+	 */
 	public Tuer(String[] pfads) {
 		anzahlSchloss = pfads.length;
 		try {
@@ -45,14 +56,22 @@ public class Tuer extends JButton implements MyInterface {
 		this.setBorderPainted(false);
 	}
 
+	/** 
+	 * Öffnet das Schloss, ändert das Bild von Tür 
+	 * @return false wenn letzte Schloss geöffnet wird
+	 */
 	public boolean schlossOffnen() {
 		++offeneSchloss;
-		if (offeneSchloss < anzahlSchloss) {
+		//System.out.println("offeneSchloss = " + offeneSchloss);
+		//System.out.println("anzahlSchloss = " + anzahlSchloss);
+		if (offeneSchloss < anzahlSchloss - 1) {
 			bild = bilder.get(offeneSchloss);
 			this.repaint();
 			return true;
 		}
 		else {
+			bild = bilder.get(offeneSchloss);
+			this.repaint();
 			return false;
 		}
 	}

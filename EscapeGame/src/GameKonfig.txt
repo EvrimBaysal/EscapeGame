@@ -2,7 +2,7 @@ AnzahlGegenstande=7
 Gegenstand1_name=Key1
 Gegenstand1_Bild=/EscapeGame/src/com/kueche/bilder/key.png
 Gegenstand1_Bild_i=/EscapeGame/src/com/kueche/bilder/key_i.png
-Gegenstand1_PosX=-1
+Gegenstand1_PosX=590
 Gegenstand1_PosY=484
 Gegenstand1_Sichtbar=0
 

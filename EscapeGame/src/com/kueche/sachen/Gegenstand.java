@@ -17,11 +17,11 @@ import javax.swing.Timer;
 import com.kueche.persistenz.MyInterface;
 
 /**
- * 
  * @author Evrim Baysal
+ * <pre>
  * Klasse Gegenstand ist die Ursprüngliche Klasse für die Sachen in das Spiel
  * Es enthält die Informationen Position, Masse und Bild
- *
+ *</pre>
  */
 public class Gegenstand extends JButton implements MyInterface{
 
@@ -32,16 +32,11 @@ public class Gegenstand extends JButton implements MyInterface{
 	protected boolean sichtbar;	//Sichtbarkeit von Gegenstand
 	protected BufferedImage bild;	//Bild von Gegenstand
 	protected BufferedImage ausgewaehlteBild;	//Bild von Gegenstand wenn ausgewählt
-	protected BufferedImage abgewaehlteBild;	//Bild von Gegenstand wenn ausgewählt
+	protected BufferedImage abgewaehlteBild;	//Bild von Gegenstand wenn abgewählt
 	protected String name;
 	protected int inventarNr = 0;
-	//private Timer timer;
+
 	
-	//private final int DELAY = 25;
-	//protected String bildPfad;
-
-
-
 	public Gegenstand(int x, int y, String bildPfad, String bildPfadAusgewaehlt, String name) {
 
 		this.posX = x;
@@ -71,13 +66,13 @@ public class Gegenstand extends JButton implements MyInterface{
 		
 	}
 
-	//Wenn ein Gegenstand gewählt bild ändern
+	/**Wenn ein Gegenstand gewählt bild ändern*/
 	public void auswaehlen() {
 		bild = ausgewaehlteBild;
 		repaint();
 	}
 	
-	//Wenn ein Gegenstand gewählt bild ändern
+	/**Wenn ein Gegenstand abgewählt bild ändern*/
 	public void abwaehlen() {
 		bild = abgewaehlteBild;
 		repaint();
